@@ -8,9 +8,9 @@
 
 ## 当前状态 (最后更新: 2026-08-02 · by AI)
 
-- **阶段**:`开发中(第③步 US-1 工程初始化,等确认门 3)`
-- **上一步完成**:US-1 骨架完成并本地自检全绿(ruff format/check ✅,pytest 6 passed ✅,覆盖率 100% ✅);streamlit smoke test 通过,发现并修正健康检查端点坑;本地环境已装 uv + Python 3.11(.venv)。
-- **下一步 (TODO 第一条)**:✋ 人类确认 US-1 → 提交推送 + 也可直接继续 US-2(等确认)。
+- **阶段**:`开发中(US-1 已完成并部署,准备 US-2)`
+- **上一步完成**:US-1 完整链路跑通 ✅——PR #2 合并 → CD 失败(镜像 tag 大写)→ fix/1-deploy-image-tag PR #3 → 合并 → CD 成功部署到主机端口 **8890**(8888 被占,回退机制实测生效),健康检查 `/_stcore/health` 通过。
+- **下一步 (TODO 第一条)**:开 `feature/2-data-analysis` 分支实现 US-2 数据分析交互页面。
 - **阻塞项**:无。
 
 ---
@@ -71,7 +71,7 @@
 - [x] 本地环境:uv 安装成功,Python 3.11.15 装入 `.venv`,依赖装齐(清华源)
 - [x] US-1 工程骨架:requirements/pyproject/Dockerfile/.dockerignore/.gitattributes/deploy.sh/ci.yml/cd.yml/src 包/app 骨架/测试
 - [x] US-1 本地自检:ruff format/check ✅、pytest 6 passed、覆盖率 100%、streamlit + `/_stcore/health` smoke test ✅
-- [ ] US-1 工程初始化 + CI/CD 全链路跑通
+- [x] **US-1 工程初始化 + CI/CD 全链路跑通**:PR #2 合并 → CD 首次失败(镜像 tag 大写)→ PR #3 修复 → 部署成功,端口 8890,健康检查通过(2026-08-02)
 - [ ] US-2 数据分析交互页面验收通过
 - [ ] US-3 离线训练管线验收通过(AUC ≥ 0.85)
 - [ ] US-4 在线预测系统验收通过
