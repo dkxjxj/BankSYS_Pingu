@@ -8,9 +8,9 @@
 
 ## 当前状态 (最后更新: 2026-08-02 · by AI)
 
-- **阶段**:`开发中(US-3 已部署,准备 US-4 在线预测)`
-- **上一步完成**:US-3 完整链路跑通 ✅——PR #7 合并 → CD 成功(40s),部署到主机端口 **8895**,健康检查通过;镜像已含训练好的模型产物。
-- **下一步 (TODO 第一条)**:开 `feature/4-online-prediction` 分支实现 US-4 在线预测系统(predictor.py + 点选式表单页)。
+- **阶段**:`开发中(US-4 本地自检全绿,待发 PR)`
+- **上一步完成**:US-4 完成:predictor.py(模型加载/单样本推理/ModelNotAvailableError)+ 预测页(pages/1_在线预测.py,20 特征全点选、示例填充、结论+概率+模型指标展示);43 测试全绿覆盖率 99.4%;AppTest 实测预测流程正常(默认特征预测不认购,概率 1.5%)。
+- **下一步 (TODO 第一条)**:提交推送 `feature/4-online-prediction` → PR → CI → 人工合并 → CD。
 - **阻塞项**:无。
 
 ---
@@ -53,7 +53,8 @@
 
 - **conda create 报 ToS 错误**:新版 conda 默认渠道未接受服务条款。解决:`conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main`(r / msys2 同款,共三次)。
 - **CI 红 FileNotFoundError 找不到数据**:数据被 .gitignore 排除或未入库,干净 runner 上没有。本项目数据已决策入库(见 ADR),若 CI 仍缺,检查 `.gitignore`。
-- **Windows 控制台 GBK 报错**:日志/打印含 `▶` 等特殊符号时报 `UnicodeEncodeError('gbk')`。解决:输出用纯 ASCII,或 `set PYTHONIOENCODING=utf-8`。注意 pytest 会吞输出,必须真跑一次脚本验证。
+- **Windows 控制台 GBK 报错**:日志/打印含 `▶`、emoji(如按钮 label `🎲`)等特殊符号时报 `UnicodeEncodeError('gbk')`。解决:输出用纯 ASCII,或 `PYTHONIOENCODING=utf-8`(调试 Streamlit 控件 label 时实测遇到)。注意 pytest 会吞输出,必须真跑一次脚本验证。
+- **Streamlit 控件不接受 numpy 类型**:`st.number_input(value=...)` 传 `numpy.float64`(如 DataFrame 取行值)会报错;默认值必须转 Python 原生类型(float/str)。示例填充功能即因此修复。
 - **`docker run` 报 `port is already allocated`(exit 125)**:主机端口被占用;按 05 标准自动回退到预留段,`docker rm -f BankSYS_Pingu` 幂等替换自身,不删他人容器。
 - **预测遇到训练集未出现的类别**:预处理管线必须含未知类别兜底(如 `handle_unknown='ignore'` / 归入 `unknown`),否则在线预测崩溃。
 - **Streamlit 健康检查端点变化**:旧版文档的 `/healthz` 在新版(2026)返回前端 HTML 而非 `ok`;正确端点是 `/_stcore/health`,返回 `ok`。已实测验证并同步修正 deploy.sh / Dockerfile / 00 文档。
