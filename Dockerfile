@@ -1,4 +1,5 @@
-# syntax=docker/dockerfile:1
+# 注意:不使用 # syntax=docker/dockerfile:1——它会从 Docker Hub 拉取前端镜像,
+# Docker Hub 网络抖动会直接导致构建失败(2026-08-02 实测)。内置语法已够用。
 FROM python:3.11-slim
 
 # 镜像源可配置(国内服务器可用清华源构建,见 05 标准第 4 节)
