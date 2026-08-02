@@ -8,9 +8,9 @@
 
 ## 当前状态 (最后更新: 2026-08-02 · by AI)
 
-- **阶段**:`开发中(US-2 本地自检全绿,待发 PR)`
-- **上一步完成**:US-2 数据分析页开发完成:analysis.py(概览/分类汇总/过滤/相关性/图表纯函数)+ app.py 数据分析页(侧边栏筛选联动 + 概览指标 + 单变量分布 + 相关性热力图)+ 22 个测试全绿,覆盖率 100%;AppTest 页面级测试 2 个通过。
-- **下一步 (TODO 第一条)**:提交推送 `feature/2-data-analysis` → PR → CI → 人工合并 → CD。
+- **阶段**:`开发中(US-3 本地自检全绿,待发 PR)`
+- **上一步完成**:US-3 训练管线完成:preprocessing.py(OneHot 未知类别兜底)+ training.py(分层划分/HistGB/评估/AUC 门禁/产物保存/CLI 入口);**全量训练实测 AUC 0.8899 达标**;34 测试全绿覆盖率 99.3%;Dockerfile 增加构建期训练,CI 增加模型门禁步骤。
+- **下一步 (TODO 第一条)**:提交推送 `feature/3-training-pipeline` → PR → CI → 人工合并 → CD。
 - **阻塞项**:无。
 
 ---
@@ -72,6 +72,6 @@
 - [x] US-1 工程骨架:requirements/pyproject/Dockerfile/.dockerignore/.gitattributes/deploy.sh/ci.yml/cd.yml/src 包/app 骨架/测试
 - [x] US-1 本地自检:ruff format/check ✅、pytest 6 passed、覆盖率 100%、streamlit + `/_stcore/health` smoke test ✅
 - [x] **US-1 工程初始化 + CI/CD 全链路跑通**:PR #2 合并 → CD 首次失败(镜像 tag 大写)→ PR #3 修复 → 部署成功,端口 8890,健康检查通过(2026-08-02)
-- [ ] US-2 数据分析交互页面验收通过
+- [x] **US-2 数据分析交互页面验收通过**:PR #5 合并 → CD 一次成功,端口 8892,健康检查通过(2026-08-02)
 - [ ] US-3 离线训练管线验收通过(AUC ≥ 0.85)
 - [ ] US-4 在线预测系统验收通过

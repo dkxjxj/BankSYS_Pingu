@@ -29,6 +29,9 @@ jobs:
       - name: 单元测试与覆盖率
         run: pytest --cov=bank_sys --cov-report=term-missing --cov-fail-under=80
 
+      - name: 模型质量门禁 (AUC ≥ 0.85)
+        run: PYTHONPATH=src python -m bank_sys.training --data data/train.csv --output-dir /tmp/models
+
   docker-build:
     runs-on: ubuntu-latest
     steps:

@@ -1,4 +1,5 @@
-# syntax=docker/dockerfile:1
+# 注意:不使用 # syntax=docker/dockerfile:1——它会从 Docker Hub 拉取前端镜像,
+# Docker Hub 网络抖动会直接导致构建失败(2026-08-02 实测)。内置语法已够用。
 FROM python:3.11-slim
 
 # 镜像源可配置(国内服务器可用清华源构建,见 05 标准第 4 节)
@@ -21,7 +22,8 @@ COPY src/ ./src/
 COPY app/ ./app/
 COPY data/ ./data/
 
-# TODO(US-3): 构建期离线训练,产出 models/ 模型产物,运行时只推理
+# 构建期离线训练:产出模型产物与指标报告(不进 Git,AUC 门禁不达标构建失败)
+RUN python -m bank_sys.training --data data/train.csv --output-dir /app/models && ls -la /app/models
 
 EXPOSE 8501
 
