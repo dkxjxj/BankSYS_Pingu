@@ -40,6 +40,32 @@ ID_COLUMN = "id"
 # 训练特征(不含 id 与目标)
 FEATURE_COLUMNS = [c for c in REQUIRED_COLUMNS if c not in (TARGET_COLUMN, ID_COLUMN)]
 
+# 特征类型划分(数据字典固定,不依赖 dtype 推断)
+NUMERIC_COLUMNS = [
+    "age",
+    "duration",
+    "campaign",
+    "pdays",
+    "previous",
+    "emp_var_rate",
+    "cons_price_index",
+    "cons_conf_index",
+    "lending_rate3m",
+    "nr_employed",
+]
+CATEGORICAL_COLUMNS = [
+    "job",
+    "marital",
+    "education",
+    "default",
+    "housing",
+    "loan",
+    "contact",
+    "month",
+    "day_of_week",
+    "poutcome",
+]
+
 
 def load_data(path: str | Path) -> pd.DataFrame:
     """加载 CSV 并做基础校验:文件存在、必需列齐全、非空。
