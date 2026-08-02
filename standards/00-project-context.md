@@ -82,7 +82,7 @@ BankSYS_Pingu/
 
 | 占位符 | 本项目取值 | 说明 |
 |---|---|---|
-| `<APP>` | `BankSYS_Pingu` | 镜像名/容器名/仓库名 |
+| `<APP>` | 容器名 `BankSYS_Pingu`、镜像名 `banksys-pingu` | 仓库名 `BankSYS_Pingu`;Docker 镜像 tag 必须小写,容器名可大写,两者解耦 |
 | `<DEPLOY_DIR>` | `/opt/BankSYS_Pingu` | 服务器部署目录 |
 | `<PORT>` | `8888` | 主机端口(优先),回退段 `8888`–`8897` |
 | `<PORT_IN>` | `8501` | 容器内固定端口(Streamlit 默认) |
