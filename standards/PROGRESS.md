@@ -8,9 +8,9 @@
 
 ## 当前状态 (最后更新: 2026-08-02 · by AI)
 
-- **阶段**:`开发中(US-4 本地自检全绿,待发 PR)`
-- **上一步完成**:US-4 完成:predictor.py(模型加载/单样本推理/ModelNotAvailableError)+ 预测页(pages/1_在线预测.py,20 特征全点选、示例填充、结论+概率+模型指标展示);43 测试全绿覆盖率 99.4%;AppTest 实测预测流程正常(默认特征预测不认购,概率 1.5%)。
-- **下一步 (TODO 第一条)**:提交推送 `feature/4-online-prediction` → PR → CI → 人工合并 → CD。
+- **阶段**:`已上线 ✅(数据访问修复中,fix/1-data-access 待合并)`
+- **上一步完成**:用户报告"训练数据读不到"。排查:本地/git/GitHub/服务器数据全部完好,根因是本地运行方式——`python -m bank_sys.training` 需 PYTHONPATH=src 且数据路径依赖 cwd。已修复:项目可安装化(`requirements.txt`=`-e .`,依赖收归 pyproject)+ 默认路径基于 `__file__` 绝对定位;实测任意目录、无 PYTHONPATH 直接运行成功(AUC 0.8899);43 测试全绿覆盖率 99.4%。
+- **下一步 (TODO 第一条)**:✋ 人工合并 fix/1-data-access → CD 部署。
 - **阻塞项**:无。
 
 ---
@@ -46,6 +46,8 @@
 | 2026-08-02 | 模型质量门禁:验证集 AUC ≥ 0.85 | 经典数据集梯度提升可达 0.90+,0.85 是安全下限 |
 | 2026-08-02 | 图表库:matplotlib + seaborn | 轻量、教学主流、无前端运行时;Streamlit 原生支持,渲染快 |
 | 2026-08-02 | 镜像名 `banksys-pingu`(小写),容器名 `BankSYS_Pingu` | Docker 镜像 tag 必须小写,容器名可大写;两者解耦 |
+| 2026-08-02 | 项目改为可安装包(`pip install -e .`,依赖收归 pyproject) | 用户报告"训练数据读不到":根因是 `python -m bank_sys.training` 需 PYTHONPATH=src 且数据路径依赖 cwd。安装化 + 路径绝对定位后,任意目录直接运行 |
+| 2026-08-02 | 训练/预测默认路径基于 `__file__` 绝对定位 | 与 cwd 解耦,杜绝"换目录就读不到数据/模型" |
 
 ---
 
@@ -55,6 +57,7 @@
 - **CI 红 FileNotFoundError 找不到数据**:数据被 .gitignore 排除或未入库,干净 runner 上没有。本项目数据已决策入库(见 ADR),若 CI 仍缺,检查 `.gitignore`。
 - **Windows 控制台 GBK 报错**:日志/打印含 `▶`、emoji(如按钮 label `🎲`)等特殊符号时报 `UnicodeEncodeError('gbk')`。解决:输出用纯 ASCII,或 `PYTHONIOENCODING=utf-8`(调试 Streamlit 控件 label 时实测遇到)。注意 pytest 会吞输出,必须真跑一次脚本验证。
 - **Streamlit 控件不接受 numpy 类型**:`st.number_input(value=...)` 传 `numpy.float64`(如 DataFrame 取行值)会报错;默认值必须转 Python 原生类型(float/str)。示例填充功能即因此修复。
+- **`python -m bank_sys.training` 报 ModuleNotFoundError / 数据读不到**:src 布局下 `python -m` 找不到包,需 PYTHONPATH=src;且默认数据路径 `data/train.csv` 依赖 cwd。修复:项目可安装化(`requirements.txt` = `-e .`,依赖收归 pyproject)+ 默认路径基于 `__file__` 绝对定位。修复后任意目录、无 PYTHONPATH 直接运行(2026-08-02 实测)。
 - **`docker run` 报 `port is already allocated`(exit 125)**:主机端口被占用;按 05 标准自动回退到预留段,`docker rm -f BankSYS_Pingu` 幂等替换自身,不删他人容器。
 - **预测遇到训练集未出现的类别**:预处理管线必须含未知类别兜底(如 `handle_unknown='ignore'` / 归入 `unknown`),否则在线预测崩溃。
 - **Streamlit 健康检查端点变化**:旧版文档的 `/healthz` 在新版(2026)返回前端 HTML 而非 `ok`;正确端点是 `/_stcore/health`,返回 `ok`。已实测验证并同步修正 deploy.sh / Dockerfile / 00 文档。

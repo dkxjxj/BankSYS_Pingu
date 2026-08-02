@@ -6,19 +6,18 @@ FROM python:3.11-slim
 ARG PIP_INDEX_URL=https://pypi.org/simple
 ENV PIP_INDEX_URL=${PIP_INDEX_URL} \
     PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app/src \
     STREAMLIT_SERVER_PORT=8501 \
     STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
     STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 
 WORKDIR /app
 
-# 依赖层(利用 Docker 缓存,只装生产运行依赖)
-COPY requirements.txt .
-RUN pip install --no-cache-dir --timeout 120 -i "${PIP_INDEX_URL}" -r requirements.txt
-
-# 代码与数据(数据进 Git,见 00 文档 ADR)
+# 依赖层(利用 Docker 缓存):先 COPY 包定义与源码,再 -e . 安装(含全部依赖)
+COPY pyproject.toml .
 COPY src/ ./src/
+RUN pip install --no-cache-dir --timeout 120 -i "${PIP_INDEX_URL}" -e .
+
+# 应用页面与数据(数据进 Git,见 00 文档 ADR)
 COPY app/ ./app/
 COPY data/ ./data/
 
