@@ -6,10 +6,8 @@
 import json
 from pathlib import Path
 
-import pandas as pd
 import pytest
 
-from bank_sys.data_loader import load_data
 from bank_sys.training import (
     DEFAULT_AUC_THRESHOLD,
     METRICS_FILE,
@@ -21,16 +19,6 @@ from bank_sys.training import (
 )
 
 DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "train.csv"
-
-
-@pytest.fixture(scope="module")
-def real_subset() -> pd.DataFrame:
-    """真实数据前 4000 行。
-
-    数据量选择依据:实测 500 行 AUC≈0.71、1500 行≈0.84、3000 行≈0.85,
-    4000 行稳定过 0.85 门禁且训练 <1s(2026-08-02 实测)。
-    """
-    return load_data(DATA_PATH).head(4000)
 
 
 def test_train_pipeline_returns_metrics(real_subset):

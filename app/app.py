@@ -41,6 +41,7 @@ def _sidebar_filters(df: pd.DataFrame) -> dict[str, list[str]]:
 def main() -> None:
     st.title("🐧 BankSYS_Pingu")
     st.caption("基于银行营销数据的分析与认购预测系统")
+    st.markdown("左侧导航:📊 数据分析看板 · 🔮 在线认购预测")
 
     try:
         df = _cached_load(str(DATA_PATH))
