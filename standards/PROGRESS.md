@@ -8,9 +8,9 @@
 
 ## 当前状态 (最后更新: 2026-08-02 · by AI)
 
-- **阶段**:`开发中(US-3 本地自检全绿,待发 PR)`
-- **上一步完成**:US-3 训练管线完成:preprocessing.py(OneHot 未知类别兜底)+ training.py(分层划分/HistGB/评估/AUC 门禁/产物保存/CLI 入口);**全量训练实测 AUC 0.8899 达标**;34 测试全绿覆盖率 99.3%;Dockerfile 增加构建期训练,CI 增加模型门禁步骤。
-- **下一步 (TODO 第一条)**:提交推送 `feature/3-training-pipeline` → PR → CI → 人工合并 → CD。
+- **阶段**:`开发中(US-3 已部署,准备 US-4 在线预测)`
+- **上一步完成**:US-3 完整链路跑通 ✅——PR #7 合并 → CD 成功(40s),部署到主机端口 **8895**,健康检查通过;镜像已含训练好的模型产物。
+- **下一步 (TODO 第一条)**:开 `feature/4-online-prediction` 分支实现 US-4 在线预测系统(predictor.py + 点选式表单页)。
 - **阻塞项**:无。
 
 ---
@@ -59,6 +59,7 @@
 - **Streamlit 健康检查端点变化**:旧版文档的 `/healthz` 在新版(2026)返回前端 HTML 而非 `ok`;正确端点是 `/_stcore/health`,返回 `ok`。已实测验证并同步修正 deploy.sh / Dockerfile / 00 文档。
 - **docker build 报 `invalid tag "BankSYS_Pingu:latest": repository name must be lowercase`**:Docker 镜像 tag 必须全小写,容器名才可大写。CI 的镜像 tag 是 `banksys-pingu:ci`(小写)所以 CI 绿,而 deploy.sh 用了大写 APP 变量导致 CD 红。解决:镜像名 `banksys-pingu`、容器名 `BankSYS_Pingu` 解耦,已修 deploy.sh 并走 fix/1-deploy-image-tag 分支。
 - **HTTPS 443 被阻断、git push 失败**:本机直连 `https://github.com` 超时(443 不通),但 **SSH 443 通道正常**。解决:`git remote set-url origin ssh://git@ssh.github.com:443/<账号>/<仓库>.git` 后 push 成功;`gh` 走 HTTPS 建仓/API 不受影响。
+- **docker build 报 `failed to do request: Head "https://registry-1.docker.io/...": i/o timeout`**:`# syntax=docker/dockerfile:1` 指令会从 Docker Hub 拉取前端镜像,Docker Hub 抖动直接导致构建失败(US-1/2 成功、US-3 偶发失败)。解决:去掉 `# syntax` 指令(未使用其新特性),改用内置语法,消除外部依赖。
 
 ---
 
@@ -73,5 +74,6 @@
 - [x] US-1 本地自检:ruff format/check ✅、pytest 6 passed、覆盖率 100%、streamlit + `/_stcore/health` smoke test ✅
 - [x] **US-1 工程初始化 + CI/CD 全链路跑通**:PR #2 合并 → CD 首次失败(镜像 tag 大写)→ PR #3 修复 → 部署成功,端口 8890,健康检查通过(2026-08-02)
 - [x] **US-2 数据分析交互页面验收通过**:PR #5 合并 → CD 一次成功,端口 8892,健康检查通过(2026-08-02)
+- [x] **US-3 离线训练管线验收通过(AUC 0.8899 ≥ 0.85)**:PR #7 合并 → CD 成功,端口 8895,健康检查通过(2026-08-02)
 - [ ] US-3 离线训练管线验收通过(AUC ≥ 0.85)
 - [ ] US-4 在线预测系统验收通过
