@@ -169,6 +169,7 @@ pip install -r requirements.txt -r requirements-dev.txt -i https://pypi.tuna.tsi
 | `conda create` 报 ToS 错误 | 执行上面的 `conda tos accept`(main/r/msys2) |
 | Windows 控制台 `UnicodeEncodeError('gbk' ... \u25b6)` | 日志/打印含特殊符号;改用纯 ASCII,或 `set PYTHONIOENCODING=utf-8` / `chcp 65001`。注意 pytest 会捕获输出掩盖此坑,必须真跑一次脚本 |
 | CI 红:`FileNotFoundError` 找不到数据 | 数据被 `.gitignore` 排除,干净 runner 上没有。公开教学数据可入库;敏感数据则在 CI 里下载/造样本 |
+| `docker build` 报 `invalid tag "Xxx:latest": repository name must be lowercase` | 镜像 tag 必须全小写;容器名 `--name` 才可大写。镜像名与容器名可解耦(如镜像 `banksys-pingu`、容器 `BankSYS_Pingu`) |
 | `docker run` 报 `port is already allocated`(exit 125) | 主机端口被占用;容器内端口固定、主机端口在预留区间自动回退(见第 4 节);`docker rm -f <APP>` 幂等替换自身 |
 | `git push` 卡住/`Recv failure`/`Connection reset` | SSH 22 被拦可切 443;HTTPS 偶发抖动则重试几次 |
 | Actions 读不到变量 | Secret 名是否拼错、是否在正确仓库 |

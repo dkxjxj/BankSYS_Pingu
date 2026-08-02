@@ -45,6 +45,7 @@
 | 2026-08-02 | 端口:容器内固定 8501,主机优先 8888,回退段 8888–8897 | 遵循 05 标准「容器内固定、主机可回退」 |
 | 2026-08-02 | 模型质量门禁:验证集 AUC ≥ 0.85 | 经典数据集梯度提升可达 0.90+,0.85 是安全下限 |
 | 2026-08-02 | 图表库:matplotlib + seaborn | 轻量、教学主流、无前端运行时;Streamlit 原生支持,渲染快 |
+| 2026-08-02 | 镜像名 `banksys-pingu`(小写),容器名 `BankSYS_Pingu` | Docker 镜像 tag 必须小写,容器名可大写;两者解耦 |
 
 ---
 
@@ -56,6 +57,7 @@
 - **`docker run` 报 `port is already allocated`(exit 125)**:主机端口被占用;按 05 标准自动回退到预留段,`docker rm -f BankSYS_Pingu` 幂等替换自身,不删他人容器。
 - **预测遇到训练集未出现的类别**:预处理管线必须含未知类别兜底(如 `handle_unknown='ignore'` / 归入 `unknown`),否则在线预测崩溃。
 - **Streamlit 健康检查端点变化**:旧版文档的 `/healthz` 在新版(2026)返回前端 HTML 而非 `ok`;正确端点是 `/_stcore/health`,返回 `ok`。已实测验证并同步修正 deploy.sh / Dockerfile / 00 文档。
+- **docker build 报 `invalid tag "BankSYS_Pingu:latest": repository name must be lowercase`**:Docker 镜像 tag 必须全小写,容器名才可大写。CI 的镜像 tag 是 `banksys-pingu:ci`(小写)所以 CI 绿,而 deploy.sh 用了大写 APP 变量导致 CD 红。解决:镜像名 `banksys-pingu`、容器名 `BankSYS_Pingu` 解耦,已修 deploy.sh 并走 fix/1-deploy-image-tag 分支。
 - **HTTPS 443 被阻断、git push 失败**:本机直连 `https://github.com` 超时(443 不通),但 **SSH 443 通道正常**。解决:`git remote set-url origin ssh://git@ssh.github.com:443/<账号>/<仓库>.git` 后 push 成功;`gh` 走 HTTPS 建仓/API 不受影响。
 
 ---
