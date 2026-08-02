@@ -21,7 +21,8 @@ COPY src/ ./src/
 COPY app/ ./app/
 COPY data/ ./data/
 
-# TODO(US-3): 构建期离线训练,产出 models/ 模型产物,运行时只推理
+# 构建期离线训练:产出模型产物与指标报告(不进 Git,AUC 门禁不达标构建失败)
+RUN python -m bank_sys.training --data data/train.csv --output-dir /app/models && ls -la /app/models
 
 EXPOSE 8501
 
