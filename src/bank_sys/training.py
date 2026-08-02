@@ -25,6 +25,10 @@ RANDOM_STATE = 42
 MODEL_FILE = "model.joblib"
 METRICS_FILE = "metrics.json"
 
+# 默认路径基于包文件定位,与 cwd 无关(在任意目录执行命令都能读到数据/写到项目 models/)
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_DATA_PATH = PROJECT_ROOT / "data" / "train.csv"
+
 
 def train_pipeline(
     df: pd.DataFrame, test_size: float = 0.2, random_state: int = RANDOM_STATE
@@ -78,7 +82,7 @@ def save_artifacts(pipeline: Pipeline, metrics: dict, output_dir: str | Path) ->
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="离线训练认购预测模型")
-    parser.add_argument("--data", default="data/train.csv", help="训练数据路径")
+    parser.add_argument("--data", default=str(DEFAULT_DATA_PATH), help="训练数据路径")
     parser.add_argument("--output-dir", default="models", help="模型产物输出目录")
     parser.add_argument("--auc-threshold", type=float, default=DEFAULT_AUC_THRESHOLD)
     args = parser.parse_args(argv)

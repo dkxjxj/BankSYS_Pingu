@@ -16,7 +16,8 @@ from sklearn.pipeline import Pipeline
 from bank_sys.data_loader import FEATURE_COLUMNS
 from bank_sys.training import MODEL_FILE
 
-DEFAULT_MODEL_PATH = Path("models") / MODEL_FILE
+# 默认路径基于包文件定位,与 cwd 无关
+DEFAULT_MODEL_PATH = Path(__file__).resolve().parents[2] / "models" / MODEL_FILE
 # 认购概率阈值:>= 0.5 判定为认购(与训练时的默认决策一致)
 PROB_THRESHOLD = 0.5
 
